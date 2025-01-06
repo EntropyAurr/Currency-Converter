@@ -42,7 +42,9 @@ function Result({ unit }) {
     async function getExchangeRates() {
       const res = await fetch(`https://v6.exchangerate-api.com/v6/${KEY}/latest/${unit}`);
     }
-  });
+
+    getExchangeRates();
+  }, []);
 
   return (
     <div className="result">
