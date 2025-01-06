@@ -3,19 +3,18 @@ import { useEffect, useState } from "react";
 const KEY = "99b81557e63a57d5f0defe33";
 
 export default function App() {
+  const [money, setMoney] = useState("");
   const [unit, setUnit] = useState("VND");
 
   return (
     <div className="container">
-      <AddInput unit={unit} setUnit={setUnit} />
-      <Result unit={unit} />
+      <AddInput money={money} setMoney={setMoney} unit={unit} setUnit={setUnit} />
+      <Result unit={unit} money={money} />
     </div>
   );
 }
 
-function AddInput({ unit, setUnit }) {
-  const [money, setMoney] = useState("");
-
+function AddInput({ money, setMoney, unit, setUnit }) {
   return (
     <div className="money">
       <input type="number" min={0} value={money} onChange={(e) => setMoney(e.target.value)} placeholder="Enter amount..." />
@@ -37,10 +36,16 @@ function AddInput({ unit, setUnit }) {
   );
 }
 
-function Result({ unit }) {
+function Result({ unit, money }) {
+  const [exchangeRate, setExchangeRate] = useState(0);
+
   useEffect(function () {
     async function getExchangeRates() {
       const res = await fetch(`https://v6.exchangerate-api.com/v6/${KEY}/latest/${unit}`);
+      const data = await res.json();
+
+      setExchangeRate(data.conversion_rates);
+      console.log(exchangeRate);
     }
 
     getExchangeRates();
