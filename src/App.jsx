@@ -38,7 +38,7 @@ function CurrencyConverter({ money, onMoneyFormat, unitFrom, setUnitFrom, unitTo
 
       getExchangeRates();
     },
-    [unitTo]
+    [unitFrom, unitTo]
   );
 
   return (
