@@ -7,27 +7,31 @@ export default function App() {
   const [exchangeRate, setExchangeRate] = useState("");
   const [unitFrom, setUnitFrom] = useState("USD");
   const [unitTo, setUnitTo] = useState("VND");
+  const [isLoading, setIsLoading] = useState(false);
 
   const rawResult = parseFloat(money.replace(/,/g, "")) * exchangeRate;
   const formatedResult = new Intl.NumberFormat("en-US").format(rawResult);
 
   return (
     <div className="container">
-      <CurrencyConverter money={money} setMoney={setMoney} unitFrom={unitFrom} setUnitFrom={setUnitFrom} unitTo={unitTo} setUnitTo={setUnitTo} exchangeRate={exchangeRate} setExchangeRate={setExchangeRate} rawResult={rawResult} formatedResult={formatedResult} />
+      <CurrencyConverter setIsLoading={setIsLoading} money={money} setMoney={setMoney} unitFrom={unitFrom} setUnitFrom={setUnitFrom} unitTo={unitTo} setUnitTo={setUnitTo} exchangeRate={exchangeRate} setExchangeRate={setExchangeRate} rawResult={rawResult} formatedResult={formatedResult} />
 
-      <Result money={money} formatedResult={formatedResult} unitTo={unitTo} />
+      <Result money={money} formatedResult={formatedResult} unitTo={unitTo} isLoading={isLoading} />
     </div>
   );
 }
 
-function CurrencyConverter({ money, setMoney, unitFrom, setUnitFrom, unitTo, setUnitTo, setExchangeRate }) {
+function CurrencyConverter({ money, setMoney, unitFrom, setUnitFrom, unitTo, setUnitTo, setExchangeRate, setIsLoading }) {
   useEffect(
     function () {
       async function getExchangeRates() {
+        setIsLoading(true);
+
         const res = await fetch(`https://v6.exchangerate-api.com/v6/${KEY}/latest/${unitFrom}`);
         const data = await res.json();
 
-        setExchangeRate(data.conversion_rates[`${unitTo}`]);
+        setExchangeRate(data.conversion_rates[unitTo]);
+        setIsLoading(false);
       }
       getExchangeRates();
     },
@@ -45,6 +49,7 @@ function CurrencyConverter({ money, setMoney, unitFrom, setUnitFrom, unitTo, set
           <option value="KRW">KRW</option>
           <option value="EUR">EUR</option>
           <option value="JPY">JPY</option>
+          <option value="CNY">CNY</option>
         </select>
 
         <select className="unit-to" value={unitTo} onChange={(e) => setUnitTo(e.target.value)}>
@@ -53,17 +58,19 @@ function CurrencyConverter({ money, setMoney, unitFrom, setUnitFrom, unitTo, set
           <option value="KRW">KRW</option>
           <option value="EUR">EUR</option>
           <option value="JPY">JPY</option>
+          <option value="CNY">CNY</option>
         </select>
       </div>
     </>
   );
 }
 
-function Result({ money, formatedResult, unitTo }) {
+function Result({ isLoading, money, formatedResult, unitTo }) {
   return (
     <div className="result">
       <p>
-        <span>Result:</span> {!money ? (formatedResult = "") : formatedResult} {unitTo}
+        <span>Result: </span>
+        {!money ? "" : <>{isLoading ? "Converting..." : `${formatedResult} ${unitTo}`}</>}
       </p>
     </div>
   );
