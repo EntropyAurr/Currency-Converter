@@ -16,10 +16,11 @@ body {
 }
 
 .container {
-  width: 50rem;
+  width: 60rem;
   margin: 5rem auto;
   padding: 2rem 2.5rem;
   border: 2px solid darkgreen;
+  border-radius: 0.6rem;
 }
 
 .money {
@@ -29,8 +30,18 @@ body {
 
 .money input {
   padding: 0.5rem 1rem;
+  font-size: 1.8rem;
+}
+
+.money select {
+  padding: 0.5rem 1rem;
+  font-size: 1.7rem;
 }
 
 .result {
   margin-top: 2rem;
+}
+
+.result span {
+  font-weight: 600;
 }
